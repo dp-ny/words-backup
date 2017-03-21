@@ -1,0 +1,29 @@
+.navbar-top {
+	margin-bottom: 15px;
+}
+
+/* boggle */
+.boggle-container table.boggle {
+	font-size: 40px;
+	font-family: monospace;
+	border: solid black 1px;
+	border-collapse: collapse;
+}
+
+.boggle-container table.boggle td {
+	border: solid black 1px;
+	width: 60px;
+	height: 60px;
+}
+
+.boggle-container .timer-container {
+	font-size: 30px;
+}
+
+.boggle-container .rules {
+	margin-top: 10px;
+}
+
+.boggle-container .rules ul {
+	margin-left: 0;
+}

@@ -1,0 +1,11 @@
+<table class="boggle">
+  {{range .Boggle}}
+    <tr>
+      {{range .}}
+        <td align=center>{{.}}</td>
+      {{end}}
+    </tr>
+  {{else}}
+    <tr>No Game Available :(</tr>
+  {{end}}
+</table>
