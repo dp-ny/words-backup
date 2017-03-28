@@ -1,59 +1,64 @@
 var boggle = function() {
   var b = {};
   b.time = undefined;
+  b.stopped = true;
   var duration = moment.duration(2, 'minutes');
   var $body = $('body');
-  var $resetButton = $('.boggle-container .actions > .reset');
   var $newButton = $('.boggle-container .actions > .new');
-  var $stopButton = $('.boggle-container .actions > .stop');
+  var $pauseButton = $('.boggle-container .actions > .pause');
+  var $boardSize = $('.boggle-container .board-size');
+
   var $timer = $('.boggle-container .timer');
   var $table = $('table.boggle');
+  var $tableTd = $('.boggle-container table.boggle td');
   var redFlash = '#FF1E1E';
   var defaultColor = $('.boggle-container').css('background-color');
   var flashCount = 10;
 
   var init = function() {
+    var initialSize = $table.css('font-size').replace('px', '');
+    $boardSize.val(initialSize);
     updateTimer();
     bindActions();
-    resetTime();
+    resetGame();
   };
 
-  var resetTime = function() {
-    b.stopped = false;
+  var resetGame = function() {
     bindTimerUpdate();
-  }
-
-  var resetGame = function(buttonText) {
-    $resetButton.html(buttonText);
-    resetTime();
     var now = moment();
     b.time = now.add(duration);
     $timer.html(getTime(duration.hours(), duration.minutes(), duration.seconds()));
   }
 
   var bindActions = function() {
-    $resetButton.on('click', function() {
-      resetGame('Reset');
-    });
     $newButton.on('click', function() {
-      resetGame('Start');
       b.stopped = true;
       $.ajax({
         url: 'boggle/new',
         success: function(data) {
           if (!data.html) {
-            alert('fuck');
+            alert('unable to fetch new board');
           } else {
             $table.html(data.html);
+            resetGame();
+            b.stopped = false;
           }
         },
         error: function() {
-          alert('double fuck');
+          alert('an error occurred');
         }
       });
     });
-    $stopButton.on('click', function() {
-      b.stopped = true;
+    $boardSize.change(function() {
+      var fontSize = Number($boardSize.val());
+      $table.css('font-size', fontSize + 'px');
+      var size = fontSize + 20;
+      $tableTd.css('width', size + 'px');
+      $tableTd.css('height', size + 'px');
+    });
+    $pauseButton.on('click', function() {
+      b.stopped = !b.stopped;
+      console.log('stopped is now', b.stopped);
     });
   };
 
@@ -92,6 +97,7 @@ var boggle = function() {
 
   var updateTimer = function() {
     if (b.stopped) {
+      bindTimerUpdate();
       return;
     }
     if (!b.time) {
@@ -109,7 +115,7 @@ var boggle = function() {
   };
 
   var bindTimerUpdate = function() {
-    setTimeout(updateTimer, 1000);
+    setTimeout(updateTimer, 100);
   };
 
   var getDefaultTime = function() {
